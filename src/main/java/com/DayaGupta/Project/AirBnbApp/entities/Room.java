@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 
 @Entity
 @Getter
@@ -32,7 +32,7 @@ public class Room {
     private String[] photos;
 
     @Column(columnDefinition = "TEXT[]")
-    private String[] anenities;
+    private String[] amenities;
 
     @Column(nullable=false)
     private Integer totalCount;

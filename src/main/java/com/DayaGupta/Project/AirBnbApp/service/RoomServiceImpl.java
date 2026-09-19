@@ -7,8 +7,8 @@ import com.DayaGupta.Project.AirBnbApp.exceptions.ResourceNotFoundException;
 import com.DayaGupta.Project.AirBnbApp.repositories.HotelRepository;
 import com.DayaGupta.Project.AirBnbApp.repositories.InventoryRepository;
 import com.DayaGupta.Project.AirBnbApp.repositories.RoomRepository;
-import jakarta.transaction.TransactionScoped;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -25,11 +25,12 @@ public class RoomServiceImpl implements RoomService {
     private final HotelRepository hotelRepository;
     private final  InventoryService inventoryService;
     private final ModelMapper modelMapper;
+
+
+    @Transactional
     @Override
     public RoomDto createNewRoom(Long hotelId, RoomDto roomDto) {
         log.info("Creating the room in Hotel :{}",hotelId);
-        // find the hotel by hotel entity
-
        Hotel hotel = hotelRepository
                .findById(hotelId)
                .orElseThrow(() ->
@@ -38,8 +39,7 @@ public class RoomServiceImpl implements RoomService {
         room.setHotel(hotel);
         room = roomRepository.save(room);
 
-        //TODO ::create inventory as soon as room is created and oif hotel is active
-        if(hotel.getActive()){
+        if (Boolean.TRUE.equals(hotel.getActive())) {
             inventoryService.initializeRoomForaYear(room);
         }
         log.info("Room created  :{}",room.getId());
@@ -75,10 +75,8 @@ public class RoomServiceImpl implements RoomService {
         Room room = roomRepository.findById(roomId).orElseThrow(()->
                 new ResourceNotFoundException("Room Not found with Id:"+roomId));
         log.info("Room deleted  :{}",roomId);
-        inventoryService.deleteFutureInventories(room);
+        inventoryService.deleteAllInventories(room);
         roomRepository.deleteById(roomId);
-        // TODO :Delete all features inventory ofr this room
-
 
     }
 }

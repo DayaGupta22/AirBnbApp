@@ -12,9 +12,9 @@ import java.util.Set;
 @Data
 public class BookingDto {
     private Long id;
-    private Hotel hotel;
-    private Room room;
-    private User user;
+//    private Hotel hotel;
+//    private Room room;
+//    private User user;
     private LocalDateTime createdAt;
     private LocalDate checkedInDate;
     private LocalDate checkedOutdate;

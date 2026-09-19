@@ -36,6 +36,7 @@ public class InventoryServiceImpl implements InventoryService {
                     .hotel(room.getHotel())
                     .room(room)
                     .bookedCount(0)
+                    .reservedCount(0)
                     .city(room.getHotel().getCity())
                     .date(today)
                     .price(room.getBasePrice())
@@ -57,18 +58,11 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public Page<HotelDto> searchHotels(HotelSearchRequest hotelSearchRequest) {
+        log.info("Searching hotels for {} city from {} to {}",hotelSearchRequest.getCity(),hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate());
         Pageable pageable= PageRequest.of(hotelSearchRequest.getPage(),hotelSearchRequest.getSize());
-   int dateCount = (int)ChronoUnit.DAYS.between(
+        int dateCount = (int)ChronoUnit.DAYS.between(
            hotelSearchRequest.getStartDate(),
            hotelSearchRequest.getEndDate())+1;
-//   System.out.println("dateCount:"+dateCount);
-//        System.out.println("city = " + hotelSearchRequest.getCity());
-//        System.out.println("startDate = " + hotelSearchRequest.getStartDate());
-//        System.out.println("endDate = " + hotelSearchRequest.getEndDate());
-//        System.out.println("roomsCount = " + hotelSearchRequest.getRoomsCount());
-//        System.out.println("dateCount = " + dateCount);
-
-
         Page<Hotel>hotelPage=inventoryRepository.findHotelsWithAvailableInventory(
 
                 hotelSearchRequest.getCity(),
@@ -77,10 +71,7 @@ public class InventoryServiceImpl implements InventoryService {
                 hotelSearchRequest.getRoomsCount(),
                 dateCount
                 ,pageable);
-//        System.out.println(hotelPage.toString());
-//        System.out.println("totalElements = " + hotelPage.getTotalElements());
-//        System.out.println("totalPages = " + hotelPage.getTotalPages());
-//        System.out.println("content = " + hotelPage.getContent());
+
         return hotelPage.map((element) -> modelMapper.map(element, HotelDto.class));
     }
 }

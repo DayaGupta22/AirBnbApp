@@ -20,7 +20,8 @@ public class Hotel {
 
     @Column(nullable=false,unique=true)
     private String name;
-@Column(nullable=false)
+
+    @Column(nullable=false)
     private String city;
 
     @Column(columnDefinition = "TEXT[]")

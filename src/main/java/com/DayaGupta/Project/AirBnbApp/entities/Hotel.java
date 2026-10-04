@@ -1,5 +1,6 @@
 package com.DayaGupta.Project.AirBnbApp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,12 +41,13 @@ public class Hotel {
     private HotelContactInfo contactInfo ;
 
     @OneToMany(mappedBy="hotel")
+    @JsonIgnore
     private List<Room>rooms;
 
     @Column(nullable=false)
     private Boolean active;
 
-    @ManyToOne
+    @ManyToOne(optional=false,fetch=FetchType.LAZY)
     private User owner;
 
 }

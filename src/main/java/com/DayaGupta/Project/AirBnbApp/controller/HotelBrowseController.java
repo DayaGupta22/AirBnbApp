@@ -1,6 +1,6 @@
 package com.DayaGupta.Project.AirBnbApp.controller;
 
-import com.DayaGupta.Project.AirBnbApp.dto.HotelDto;
+
 import com.DayaGupta.Project.AirBnbApp.dto.HotelPriceDto;
 import com.DayaGupta.Project.AirBnbApp.dto.HotelSearchRequest;
 import com.DayaGupta.Project.AirBnbApp.dto.HotelnfoDto;
@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/hotels")

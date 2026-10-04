@@ -6,11 +6,13 @@ import com.DayaGupta.Project.AirBnbApp.dto.GuestDto;
 import com.DayaGupta.Project.AirBnbApp.entities.*;
 import com.DayaGupta.Project.AirBnbApp.entities.enums.BookingStatus;
 import com.DayaGupta.Project.AirBnbApp.exceptions.ResourceNotFoundException;
+import com.DayaGupta.Project.AirBnbApp.exceptions.UnAuthorizedException;
 import com.DayaGupta.Project.AirBnbApp.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -85,7 +87,10 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(()->
                 new ResourceNotFoundException("Booking not Found on Booking time with id :"+bookingId));
-
+             User user = getCurrentuser();
+             if(!user.equals(booking.getUser())){
+                    throw new UnAuthorizedException("Booking doesnot belong to this user with id :{}"+user.getId());
+             }
         if(hasBookingExpired(booking)){
             throw new IllegalStateException("Booking has already expired");
         }
@@ -94,7 +99,7 @@ public class BookingServiceImpl implements BookingService {
         }
         for(GuestDto guestDto : guestDtoList){
             Guest guest = modelMapper.map(guestDto,Guest.class);
-            guest.setUser(getCurrentuser());
+            guest.setUser(user);
             guest= guestRepository.save(guest);
             booking.getGuests().add(guest);
         }
@@ -106,9 +111,7 @@ public class BookingServiceImpl implements BookingService {
         return booking.getCreatedAt().plusMinutes(10).isBefore(LocalDateTime.now());
     }
     public User getCurrentuser(){
-        User user= new User();
-        user.setId(1L); //TODO : remove dummy User
-        return user;
+       return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     }
 

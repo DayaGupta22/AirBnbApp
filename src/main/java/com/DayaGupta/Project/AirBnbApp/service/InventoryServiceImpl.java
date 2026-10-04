@@ -26,6 +26,7 @@ public class InventoryServiceImpl implements InventoryService {
     private final ModelMapper modelMapper;
     private final InventoryRepository inventoryRepository;
     private final HotelMinPriceRepository hotelMinPriceRepository;
+
     @Override
     public void initializeRoomForaYear(Room room) {
 
@@ -64,10 +65,16 @@ public class InventoryServiceImpl implements InventoryService {
         log.info("Searching hotels for {} city from {} to {}",hotelSearchRequest.getCity(),hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate());
 
         Pageable pageable= PageRequest.of(hotelSearchRequest.getPage(),hotelSearchRequest.getSize());
+        log.info(
+                "page={}, size={}",
+                hotelSearchRequest.getPage(),
+                hotelSearchRequest.getSize()
+        );
         int dateCount = (int)ChronoUnit.DAYS.between(
            hotelSearchRequest.getStartDate(),
            hotelSearchRequest.getEndDate())+1;
      // buisness logic -- 90days
+        log.info("city = {}", hotelSearchRequest.getCity());
         Page<HotelPriceDto>hotelPage=hotelMinPriceRepository.findHotelsWithAvailableInventory(
                 hotelSearchRequest.getCity(),
                  hotelSearchRequest.getStartDate(),
@@ -75,7 +82,7 @@ public class InventoryServiceImpl implements InventoryService {
                 hotelSearchRequest.getRoomsCount(),
                 dateCount
                 ,pageable);
-
+    log.info("hotelpage not ofund {}",hotelPage.toString());
         return hotelPage;
     }
 }
